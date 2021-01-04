@@ -2,7 +2,7 @@
 
 
 ### Code Files
-This project contains the source code (in C#) described in 'PSO+: A new particle swarm optimization algorithm for constrained problems'. This [work] (https://doi.org/10.1016/j.asoc.2019.105865) was published in Applied Soft Computing, Volume 85, December 2019, 105865 ==> [Click] (https://doi.org/10.1016/j.asoc.2019.105865)
+This project contains the source code (in C#) described in 'PSO+: A new particle swarm optimization algorithm for constrained problems'. This [work](https://doi.org/10.1016/j.asoc.2019.105865) was published in Applied Soft Computing, Volume 85, December 2019, 105865 ==> [Click](https://doi.org/10.1016/j.asoc.2019.105865)
 
 This repository contains two projects:
 
