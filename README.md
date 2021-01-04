@@ -1,8 +1,8 @@
-# PSO+: A new particle swarm optimization algorithm for constrained problems
+# [PSO+: A new particle swarm optimization algorithm for constrained problems](https://doi.org/10.1016/j.asoc.2019.105865)
 
 
-### Code Files
-This project contains the source code (in C#) described in 'PSO+: A new particle swarm optimization algorithm for constrained problems'. This [work] (https://doi.org/10.1016/j.asoc.2019.105865) was published in Applied Soft Computing, Volume 85, December 2019, 105865 ==> [Click] (https://doi.org/10.1016/j.asoc.2019.105865)
+## Code Files
+This project contains the source code (in C#) described in 'PSO+: A new particle swarm optimization algorithm for constrained problems'. This [work](https://doi.org/10.1016/j.asoc.2019.105865) was published in Applied Soft Computing, Volume 85, December 2019.
 
 This repository contains two projects:
 
@@ -25,7 +25,7 @@ So, inside the second directory, there's the pso+ code, excluding the private pa
 
 This code must be called from your program. These classes are loose and must be added to the project to be developed. Your code must also be adapted to the problem to be solved.
 
-### Tutorial
+## Tutorial
 
 Microsoft Visual Studio 2017 was used. A newer version or any other IDEs will probably need adaptations.
 
@@ -34,7 +34,7 @@ For the intial code:
 - Set PSO.View as StartUp Project.
 - Run.
 
-### Citation
+## Citation
 
 ```
 @article{kohler2019,
@@ -47,7 +47,7 @@ For the intial code:
  }
  ```
 
-### Acknowledgments
+## Acknowledgments
 The authors would like to thank CNPq, Brazil, FAPERJ, Brazil and Intel Corporation, USA for their financial support. In addition, we would like to thank Petrobras research group from CENPES for their support and advices.
 
-ATTN: This code is free for academic usage. For other purposes, please contact Edson Bollis (edsonbollis@gmail.com).
+ATTN: This code is free for academic usage. For other purposes, please contact Manoela Kohler (manoela@ele.puc-rio.br).
