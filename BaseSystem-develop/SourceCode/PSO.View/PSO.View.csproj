@@ -1,0 +1,183 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2B019456-4AB8-41DD-BC53-78FE2A0B8EA2}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PSO.View</RootNamespace>
+    <AssemblyName>PSO.View</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Controls.Ribbon" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="ViewModel\Mediators\IColleague.cs" />
+    <Compile Include="ViewModel\Mediators\IMediator.cs" />
+    <Compile Include="ViewModel\Mediators\MediatorBase.cs" />
+    <Compile Include="ViewModel\Mediators\MediatorPatternException.cs" />
+    <Compile Include="ViewModel\Mediators\OptimizationMediator.cs" />
+    <Compile Include="ViewModel\PsoConfigurationWindowViewModel.cs" />
+    <Compile Include="ViewModel\SystemConfigurationWindowViewModel.cs" />
+    <Compile Include="ViewModel\WindowsToLaunchEnum.cs" />
+    <Compile Include="View\PsoConfigurationWindow.xaml.cs">
+      <DependentUpon>PsoConfigurationWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\SystemConfigurationWindow.xaml.cs">
+      <DependentUpon>SystemConfigurationWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\WindowsBase\PsoNlcWindow.cs" />
+    <Page Include="View\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="ViewModel\MainWindowViewModel.cs" />
+    <Compile Include="View\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="View\PsoConfigurationWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\SystemConfigurationWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PSO.Optimization\PSO.Optimization.csproj">
+      <Project>{8d2bfc3b-603b-4f1a-b57f-52c9a6e47948}</Project>
+      <Name>PSO.Optimization</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PSO.Utils\PSO.Utils.csproj">
+      <Project>{329225A3-3778-43D7-8F59-72512A01161E}</Project>
+      <Name>PSO.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PSO\PSO.csproj">
+      <Project>{0A771515-CF74-4268-B572-B5A0975488D3}</Project>
+      <Name>PSO</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\16\edit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\32\edit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\32\configuration.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\16\Play_button_16.png" />
+    <Resource Include="Icons\24\Play_button_24.png" />
+    <Resource Include="Icons\32\Play_button_32.png" />
+    <Resource Include="Icons\64\Play_button_64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\128\Play_button_128.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\64\Play_button_64_blue.png" />
+    <Resource Include="Icons\64\Play_button_64_green.png" />
+    <Resource Include="Icons\64\Play_button_64_purple.png" />
+    <Resource Include="Icons\64\Play_button_64_red.png" />
+    <Resource Include="Icons\64\Play_button_64_yellow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\16\quit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="flock_of_birds_32.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\64\businessman87.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

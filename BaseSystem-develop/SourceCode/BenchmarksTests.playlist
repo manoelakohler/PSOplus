@@ -1,0 +1,1 @@
+<Playlist Version="1.0"><Add Test="PSO.Tests.PSO.Benchmarks.Tests.NonLinearConstraintsTests.TestBenchmarkG01FunctionWithGlobalBest" /><Add Test="PSO.Tests.PSO.Benchmarks.Tests.NonLinearConstraintsTests.TestBenchmarkAckley" /></Playlist>

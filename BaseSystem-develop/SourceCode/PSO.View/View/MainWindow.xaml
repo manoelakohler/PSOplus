@@ -1,0 +1,68 @@
+﻿<RibbonWindow x:Class="PSO.View.View.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStartupLocation="CenterScreen" UseLayoutRounding="True"
+        DataContext="{Binding RelativeSource={RelativeSource Self}, Path=Model}"
+        Title="NLC_PSO" Height="350" Width="750" Icon="/flock_of_birds_32.ico">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="108"/>
+            <!--<RowDefinition/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition MaxHeight="200" MinHeight="100"/>-->
+        </Grid.RowDefinitions>
+
+        <Ribbon Grid.Row="0" Grid.RowSpan="2" Name="MainWindowRibbon" 
+                Background="WhiteSmoke">
+            <Ribbon.ApplicationMenu>
+                <RibbonApplicationMenu Label="Arquivo">
+                    <RibbonApplicationMenuItem Header="Configurações"
+                                               Width="auto" ImageSource="/Icons/32/configuration.png" Click="OpenSystemConfigurationWindow_OnClick"/>
+                    <RibbonApplicationMenu.FooterPaneContent>
+                        <DockPanel LastChildFill="False">
+                            <RibbonButton Label="Fechar" SmallImageSource="/Icons/16/quit.png" Click="HandleCloseEvent" DockPanel.Dock="Right"/>
+                        </DockPanel>
+                    </RibbonApplicationMenu.FooterPaneContent>
+                </RibbonApplicationMenu>
+            </Ribbon.ApplicationMenu>
+
+            <RibbonTab Header="Principal">
+                <RibbonGroup Header="Otimização">
+                    <RibbonButton Label="Original" VerticalAlignment="Center" HorizontalAlignment="Center" LargeImageSource="/Icons/64/Play_button_64.png"  Click="Optimize_OnClick"/>
+                    <RibbonButton Label="Restrições de Domínio" VerticalAlignment="Center" HorizontalAlignment="Center" LargeImageSource="/Icons/64/Play_button_64_purple.png"  Click="OptimizeWithLinearConstraints_OnClick"/>
+                </RibbonGroup>
+
+                <RibbonGroup Header="Otimização Restrições Não Lineares" Width="440">
+                    <RibbonButton Label="G01 - Inteira, Minimização" LargeImageSource="/Icons/64/Play_button_64_green.png" VerticalAlignment="Center" HorizontalAlignment="Center" Click="OptimizeWithNonLinearConstraints_OnClick"></RibbonButton>
+                    <RibbonButton Label="G12 - Inteira, Maximização" LargeImageSource="/Icons/64/Play_button_64_blue.png" VerticalAlignment="Center" HorizontalAlignment="Center" Click="OptimizeWithNonLinearConstraints2_OnClick"></RibbonButton>
+                    <RibbonButton Label="G04-G07, G09-G11, G13-G24 - Real, Minimização" LargeImageSource="/Icons/64/Play_button_64_red.png" VerticalAlignment="Center" HorizontalAlignment="Center" Click="OptimizeWithNonLinearConstraints3_OnClick"></RibbonButton>
+                    <RibbonButton Label="G02, G03, G08 - Real, Maximização" LargeImageSource="/Icons/64/Play_button_64_yellow.png" VerticalAlignment="Center" HorizontalAlignment="Center" Click="OptimizeWithNonLinearConstraints4_OnClick"></RibbonButton>
+                </RibbonGroup>
+                
+                <RibbonGroup Header="Configuração">
+                    <RibbonButton Label="Modificar" LargeImageSource="/Icons/32/edit.png"  Click="ModifyPsoConfigurationEvent"/>
+                </RibbonGroup>
+
+                <RibbonGroup Header="Run">
+                    <RibbonButton Label="Run Forrest" LargeImageSource="/Icons/64/businessman87.png"  Click="RunForrestRun"/>
+                </RibbonGroup>
+
+
+
+            </RibbonTab>
+
+            <!--<RibbonTab Header="Simulação">
+                <RibbonGroup Header="Simulações">
+                    <RibbonButton Label="Executar"  LargeImageSource="/Icons/32/run_32.png" Click="HandleLaunchSimulationWindowEvent"/>
+                    <RibbonButton Label="Exibir"  LargeImageSource="/Icons/32/show_32.png" Click="HandleShowSimulationResultsEvent"/>
+                </RibbonGroup>
+            </RibbonTab>-->
+
+        </Ribbon>
+
+
+    </Grid>
+
+</RibbonWindow>

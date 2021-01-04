@@ -1,0 +1,358 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using PSO.Benchmarks;
+using PSO.Interfaces;
+
+
+namespace PSO.ParticlesNlcDouble
+{
+    /// <summary>
+    /// Provides a basic implementation of a paricle.
+    /// </summary>
+    public abstract class ParticleNlcDouble : IComparable<ParticleNlcDouble>, IParticle
+    {
+        #region Variables
+        protected static Random Rnd = new Random();
+        public double BestCost { get; set; }
+
+        public int ContraintViolation { get; set; }
+        public double ContraintsTotalCost { get; set; }
+
+        /// <summary>
+        /// Numero máximo de tentativas que o algoritmo fará até encontrar uma partícula válida.
+        /// </summary>
+        private const int MaximumNumberOfTrials = 400;
+
+        #endregion
+        //---------------------------------------------------------------------
+        #region Properties
+        /// <summary>
+        /// The cost for this particle. The lower the better.
+        /// </summary>
+        public double Cost { get; set; }
+        //---------------------------------------------------------------------
+        /// <summary>
+        /// The current position of the particle.
+        /// </summary>
+        public virtual double[] Position { get; set; }
+        //---------------------------------------------------------------------
+        /// <summary>
+        /// The best position of this particle so far.
+        /// </summary>
+        /// <remarks>pBest.</remarks>
+        public double[] BestPosition { get; protected set; }
+        //---------------------------------------------------------------------
+        /// <summary>
+        /// Indexer.
+        /// </summary>
+        /// <param name="index">Index.</param>
+        /// <exception cref="IndexOutOfRangeException">
+        /// The index is outside the valid limits.
+        /// </exception>
+        public double this[int index]
+        {
+            get { return Position[index]; }
+            set { Position[index] = value; }
+        }
+        //---------------------------------------------------------------------
+        /// <summary>
+        /// The velocity of the particle.
+        /// </summary>
+        public double[] Velocity { get; protected set; }
+        //---------------------------------------------------------------------
+        /// <summary>
+        /// The particle swarm to whom this particle belongs.
+        /// </summary>
+        public ParticleSwarmNlcDouble Swarm { get; protected set; }
+        #endregion
+        //---------------------------------------------------------------------
+        #region Methods
+        /// <summary>
+        /// Calculates the cost for this particle.
+        /// </summary>
+        public abstract void CalculateCost();
+        public abstract void CalculateCostCv();
+        //---------------------------------------------------------------------
+        /// <summary>
+        /// Updates the history for this particle.
+        /// </summary>
+        public void UpdateHistory()
+        {
+            if (Swarm.IsMaximization)
+            {
+                if (!(Cost >= BestCost)) return;
+            }
+            else
+            {
+                if (!(Cost <= BestCost)) return;
+            }
+            //if (!Swarm.Constraints.IsFeasible(this)) return;
+
+            BestCost = Cost;
+            BestPosition = GetArrayCopy();
+        }
+        //---------------------------------------------------------------------
+        /// <summary>
+        /// Updates the position (and velocity) of the particle.
+        /// </summary>
+        /// <param name="bestPositionOfSwarm">
+        /// The current best position of the particle swarm.
+        /// </param>
+        /// <param name="nonLinearConstraints"></param>
+        public void UpdateVelocityAndPosition(double[] bestPositionOfSwarm, IConstraints nonLinearConstraints)
+        {
+            if (BestPosition == null)
+                UpdateHistory();
+
+            // Determine maximum allowed velocity:
+            //var xmax = Math.Min(
+            //    Math.Abs(Position.Min()),
+            //    Math.Abs(Position.Max()));
+            //var vmax = (int)(Swarm.PercentMaximumVelocityOfSearchSpace * xmax);
+            var bounder = BenchmarksSolution.GetBounders(nonLinearConstraints.FunctionName);
+
+            // Range-Check-Elimination: Therefore get a reference to the arrays
+            // on the local stack -> improvement of speed:
+            var localVelocity = Velocity;
+            var localPosition = Position;
+            var localBestPosition = BestPosition;
+
+            for (var i = 0; i < localVelocity.Length; i++)
+            {
+                //VelocityVector Limits
+                var vmax = bounder[i,1] - localPosition[i];
+                var vmin = bounder[i,0] - localPosition[i];
+
+                // Factors for calculating the velocity:
+                var c1 = Swarm.TendencyToOwnBest;
+                var r1 = Rnd.NextDouble();
+                var c2 = Swarm.TendencyToGlobalBest;
+                var r2 = Rnd.NextDouble();
+                var m = Swarm.Momentum;
+
+                // New velocity of the particle:
+                var newVelocity = m * localVelocity[i] + c1 * r1 * (localBestPosition[i] - localPosition[i]) +
+                                      c2 * r2 * (bestPositionOfSwarm[i] - localPosition[i]);
+                //var prob = Swarm.Sampler.NextDouble();
+                //if (prob < 0.5)
+                //{
+                //    var neighboorhood = GetNeighborhood();
+                //    newVelocity = m * localVelocity[i] + c1 * r1 * (neighboorhood[0][i] - localPosition[i]) +
+                //                      c2 * r2 * (neighboorhood[1][i] - localPosition[i]);
+                //}
+
+                // Limit the velocity to the maximum value:
+                if (newVelocity > vmax)
+                    newVelocity = vmax;
+                //if (newVelocity < -vmax)
+                //    newVelocity = -vmax;
+                if (newVelocity < vmin)
+                    newVelocity = vmin;
+
+                // Assign new velocity and calculate the new position:
+                localVelocity[i] = newVelocity;
+                localPosition[i] += localVelocity[i];
+            }
+
+            //Verifica validade da partícula
+            var isFeasible = nonLinearConstraints.IsFeasible(this);
+
+            if (!isFeasible)
+            {
+                RecalculateVelocityAndPosition(nonLinearConstraints);
+            }
+            UpdateCostAndHistory();
+        }
+
+        public void UpdateVelocityAndPositionCv(double[] bestPositionOfSwarm, IConstraints nonLinearConstraints)
+        {
+            if (BestPosition == null)
+                UpdateHistory();
+
+            var bounder = BenchmarksSolution.GetBounders(nonLinearConstraints.FunctionName);
+
+            // Range-Check-Elimination: Therefore get a reference to the arrays
+            // on the local stack -> improvement of speed:
+            var localVelocity = Velocity;
+            var localPosition = Position;
+            var localBestPosition = BestPosition;
+
+            for (var i = 0; i < localVelocity.Length; i++)
+            {
+                //VelocityVector Limits
+                var vmax = bounder[i, 1] - localPosition[i];
+                var vmin = bounder[i, 0] - localPosition[i];
+
+                // Factors for calculating the velocity:
+                var c1 = Swarm.TendencyToOwnBest;
+                var r1 = Rnd.NextDouble();
+                var c2 = Swarm.TendencyToGlobalBest;
+                var r2 = Rnd.NextDouble();
+                var m = Swarm.Momentum;
+
+                // New velocity of the particle:
+                var newVelocity = m * localVelocity[i] + c1 * r1 * (localBestPosition[i] - localPosition[i]) +
+                                      c2 * r2 * (bestPositionOfSwarm[i] - localPosition[i]);
+
+                // Limit the velocity to the maximum and minimum value:
+                if (newVelocity > vmax)
+                    newVelocity = vmax;
+                if (newVelocity < vmin)
+                    newVelocity = vmin;
+
+                // Assign new velocity and calculate the new position:
+                localVelocity[i] = newVelocity;
+                localPosition[i] += localVelocity[i];
+            }
+
+            UpdateCostAndHistoryCv();
+        }
+
+        private List<double[]> GetNeighborhood()
+        {
+            var neighbors = new List<double[]>();
+
+            for (int i = 0; i < 2; i++)
+            {
+                var neighborIndex = Swarm.Sampler.Next(0, Swarm.SwarmSize);
+                neighbors.Add(Swarm.ReferenceParticles[neighborIndex].Position);
+            }
+            return neighbors;
+        }
+
+        private void UpdateCostAndHistory()
+        {
+            //from current particle
+            CalculateCost();
+            UpdateHistory();
+        }
+
+        private void UpdateCostAndHistoryCv()
+        {
+            //from current particle
+            CalculateCostCv();
+            UpdateHistory();
+        }
+
+        /// <summary>
+        /// Recalcula velocidade e posição da partícula que não obedecer às restrições lineares.
+        /// </summary>
+        private void RecalculateVelocityAndPosition(IConstraints constraints)
+        {
+            //Pego uma partícula válida da população de referencia? Faço um crossover aritmético da melhor partícula válida com a partícula inválida
+            //Objetivo é tentar aproximar a partícula inválida do espaço de soluções válidas. Refaço o procedimento até que a partícula inválida se torne válida
+            var nTrials = 0;
+            var isFeasible = false;
+            var probability = Swarm.Sampler.NextDouble();
+            var random = Swarm.Sampler.Next(0, Swarm.ReferenceParticles.Count());
+            var chosenParticle = Swarm.ReferenceParticles.ElementAt(random);
+
+            while (!isFeasible && nTrials < MaximumNumberOfTrials)
+            {
+                var randomNumber = Swarm.Sampler.NextDouble();
+                var newPosition = new double[Position.Count()];
+
+                for (var positionIndex = 0; positionIndex < Position.Count(); positionIndex++)
+                {
+                    var feasiblePosition = chosenParticle.Position.ElementAt(positionIndex);
+                    var infeasiblePosition = Position.ElementAt(positionIndex);
+
+                    var newPositionValue = randomNumber * feasiblePosition +
+                                           (1 - randomNumber) * infeasiblePosition;
+
+                    newPosition[positionIndex] = newPositionValue;
+                }
+                //Atualiza partícula
+                Position = newPosition;
+
+                //Verifica restrições lineares atualiza isFeasible.
+                if (constraints.IsFeasible(this)) 
+                    isFeasible = true;
+                nTrials++;
+            }
+
+            if (Swarm.UseFootholds)
+            {
+                var tries = 0;
+                while (isFeasible && tries < 10)
+                {
+                    if (probability > 0.3) break;
+
+                    var foothold = Swarm.FootHolds.ElementAt(random);
+
+                    var randomNumber = Swarm.Sampler.NextDouble()/2;
+                    var newPositionFoothold = new double[Position.Length];
+
+                    for (var positionIndex = 0; positionIndex < Position.Length; positionIndex++)
+                    {
+                        var footholdPosition = foothold.Position.ElementAt(positionIndex);
+                        var feasiblePosition = Position.ElementAt(positionIndex);
+
+                        var newPositionValue = randomNumber*footholdPosition +
+                                               (1 - randomNumber)*feasiblePosition;
+
+                        newPositionFoothold[positionIndex] = (int) newPositionValue;
+
+                        randomNumber = Swarm.Sampler.NextDouble()/2;
+                    }
+
+                    var oldValidPosition = Position;
+                    //Atualiza partícula
+                    Position = newPositionFoothold;
+                    tries++;
+
+                    //Verifica restrições lineares atualiza isFeasible.
+                    if (constraints.IsFeasible(this)) continue;
+                    isFeasible = false;
+                    Position = oldValidPosition;
+                }
+            }
+            // se depois de Max tentativas nao encontrar uma partícula válida, copia a original ???
+            // ou retorna erro???? todo: avaliar impacto aqui
+            if (nTrials == MaximumNumberOfTrials)
+            {
+                Position = BestPosition;
+                //modificar velocidade?????
+
+                //if (!constraints.IsFeasible(this))
+                //    throw new Exception("Partícula inválida.");
+            }
+        }
+
+        
+
+        #endregion
+        //---------------------------------------------------------------------
+        #region Private Methoden
+        /// <summary>
+        /// Gets a copy of the current solution vector.
+        /// </summary>
+        private double[] GetArrayCopy()
+        {
+            var tmp = new double[Position.Length];
+            Position.CopyTo(tmp, 0);
+
+            return tmp;
+        }
+        #endregion
+        //---------------------------------------------------------------------
+        #region IComparable<Particle> Member
+        /// <summary>
+        /// Compares to particles. Used for sorting.
+        /// </summary>
+        public int CompareTo(ParticleNlcDouble other)
+        {
+            if (other == null)
+                throw new ArgumentNullException("other");
+            //-----------------------------------------------------------------
+            if (this == other || this.Cost == other.Cost)
+                return 0;
+
+            if (Cost > other.Cost)
+                return 1;
+            return -1;
+        }
+        #endregion
+    }
+}
