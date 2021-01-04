@@ -50,4 +50,4 @@ For the intial code:
 ### Acknowledgments
 The authors would like to thank CNPq, Brazil, FAPERJ, Brazil and Intel Corporation, USA for their financial support. In addition, we would like to thank Petrobras research group from CENPES for their support and advices.
 
-ATTN: This code is free for academic usage. For other purposes, please contact Edson Bollis (edsonbollis@gmail.com).
+ATTN: This code is free for academic usage. For other purposes, please contact Manoela Kohler (manoela@ele.puc-rio.br).
